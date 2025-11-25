@@ -14,7 +14,9 @@ import {
   ExternalLink,
   Calendar,
   Tag,
-  Globe
+  Globe,
+  DollarSign,
+  X
 } from 'lucide-vue-next'
 
 const router = useRouter()
@@ -288,6 +290,71 @@ const getPlatformUrl = (accountId: string, platform: CommunityType): string | un
   return stats?.platformStats?.[platform]?.url
 }
 
+// "写即有钱"平台数据
+const monetizationPlatforms = [
+  {
+    category: '直接有收益',
+    description: '发文就能获取平台流量收益',
+    platforms: [
+      { name: '知乎', icon: '🤔', url: 'https://www.zhihu.com', description: '创作者收益 + 盐值体系，AI/大模型类内容易出爆款', color: 'bg-cyan-50 border-cyan-200' },
+      { name: '小红书', icon: '📖', url: 'https://www.xiaohongshu.com', description: '流量激励计划，技术图文、工具推荐都能赚钱', color: 'bg-pink-50 border-pink-200' },
+      { name: '头条号', icon: '📰', url: 'https://www.toutiao.com', description: '广告分成，科技/AI/趋势类CPM不错', color: 'bg-orange-50 border-orange-200' },
+      { name: '百家号', icon: '📝', url: 'https://baijiahao.baidu.com', description: '广告收益单价偏高，科技内容受众大', color: 'bg-blue-50 border-blue-200' },
+      { name: '大鱼号', icon: '🐟', url: 'https://mp.dayu.com', description: '图文与视频激励，技术内容OK', color: 'bg-purple-50 border-purple-200' },
+      { name: '网易号', icon: '🎮', url: 'https://mp.163.com', description: '图文分成 + 任务激励，科技内容阅读不错', color: 'bg-red-50 border-red-200' },
+      { name: '搜狐号', icon: '🦊', url: 'https://mp.sohu.com', description: '广告分成，科技内容容易过审', color: 'bg-yellow-50 border-yellow-200' }
+    ]
+  },
+  {
+    category: '图文+视频双激励',
+    description: '综合型平台，视频收益更高',
+    platforms: [
+      { name: 'Bilibili', icon: '📺', url: 'https://www.bilibili.com', description: '创作激励，技术教程、AI工具介绍适合', color: 'bg-pink-50 border-pink-200' },
+      { name: '抖音', icon: '🎵', url: 'https://www.douyin.com', description: '图文+中视频激励，技术内容增长快', color: 'bg-gray-900 text-white border-gray-700' },
+      { name: '西瓜视频', icon: '🍉', url: 'https://www.ixigua.com', description: '中视频激励体系成熟，科技教程吃香', color: 'bg-green-50 border-green-200' }
+    ]
+  },
+  {
+    category: '内容变现/广告合作',
+    description: '商业价值高，可接广告',
+    platforms: [
+      { name: '掘金', icon: '⛏️', url: 'https://juejin.cn', description: '技术广告、合作邀稿、付费专栏', color: 'bg-blue-50 border-blue-200' },
+      { name: 'CSDN', icon: '📝', url: 'https://blog.csdn.net', description: '付费专栏+技术课程+软文合作', color: 'bg-red-50 border-red-200' },
+      { name: 'InfoQ', icon: 'ℹ️', url: 'https://www.infoq.cn', description: '高质量稿件稿费高，大模型/架构受欢迎', color: 'bg-purple-50 border-purple-200' },
+      { name: '51CTO', icon: '💻', url: 'https://www.51cto.com', description: '技术培训稿费不错，AI应用需求大', color: 'bg-green-50 border-green-200' }
+    ]
+  },
+  {
+    category: '付费内容平台',
+    description: '长期收益，付费订阅',
+    platforms: [
+      { name: '知识星球', icon: '⭐', url: 'https://wx.zsxq.com', description: '技术内容付费订阅，AI工程化内容适合', color: 'bg-yellow-50 border-yellow-200' },
+      { name: '小鹅通', icon: '🦢', url: 'https://www.xiaoe-tech.com', description: '技术文章沉淀为课程或手册', color: 'bg-indigo-50 border-indigo-200' }
+    ]
+  },
+  {
+    category: '海外技术平台',
+    description: '可同步发布，收益不错',
+    platforms: [
+      { name: 'Medium', icon: '📰', url: 'https://medium.com', description: 'AI/软件工程收益不错，阅读按分钟计费', color: 'bg-gray-50 border-gray-200' },
+      { name: 'Substack', icon: '📧', url: 'https://substack.com', description: '订阅制科技newsletter，技术洞察适合', color: 'bg-orange-50 border-orange-200' }
+    ]
+  }
+]
+
+// 控制"写即有钱"弹窗显示
+const showMonetizationModal = ref(false)
+
+// 打开"写即有钱"弹窗
+const openMonetizationModal = () => {
+  showMonetizationModal.value = true
+}
+
+// 关闭弹窗
+const closeMonetizationModal = () => {
+  showMonetizationModal.value = false
+}
+
 onMounted(() => {
   // 这里可以读取文件系统中的MD文件列表
   // 暂时使用空列表，后续可以根据实际文件系统读取
@@ -323,9 +390,18 @@ onMounted(() => {
 
       <!-- 社区平台 -->
       <div class="mb-8">
-        <div class="flex items-center space-x-3 mb-4">
-          <Globe class="w-5 h-5 text-gray-600" />
-          <h2 class="text-lg font-semibold text-gray-700">社区平台</h2>
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center space-x-3">
+            <Globe class="w-5 h-5 text-gray-600" />
+            <h2 class="text-lg font-semibold text-gray-700">社区平台</h2>
+          </div>
+          <button
+            @click="openMonetizationModal"
+            class="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-lg hover:from-amber-600 hover:to-orange-600 transition-all duration-200 shadow-md hover:shadow-lg"
+          >
+            <DollarSign class="w-4 h-4" />
+            <span class="text-sm font-medium">写即有钱</span>
+          </button>
         </div>
         <div class="bg-white rounded-lg border border-gray-200 shadow-sm p-4">
           <div v-if="allPlatformsData.length === 0" class="text-center py-8">
@@ -519,6 +595,79 @@ onMounted(() => {
               <li>点击文章可以在IDE中打开对应的文件进行编辑</li>
               <li>编辑完成后，可以通过发布功能将内容分发到各个矩阵号平台</li>
             </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- "写即有钱"弹窗 -->
+    <div
+      v-if="showMonetizationModal"
+      class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
+      @click.self="closeMonetizationModal"
+    >
+      <div class="bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[90vh] overflow-hidden flex flex-col">
+        <!-- 弹窗头部 -->
+        <div class="flex items-center justify-between p-6 border-b border-gray-200 bg-gradient-to-r from-amber-50 to-orange-50">
+          <div class="flex items-center space-x-3">
+            <DollarSign class="w-6 h-6 text-amber-600" />
+            <h2 class="text-2xl font-bold text-gray-800">写即有钱 - 变现平台清单</h2>
+          </div>
+          <button
+            @click="closeMonetizationModal"
+            class="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+          >
+            <X class="w-5 h-5 text-gray-600" />
+          </button>
+        </div>
+
+        <!-- 弹窗内容 -->
+        <div class="flex-1 overflow-y-auto p-6">
+          <div class="space-y-8">
+            <div
+              v-for="category in monetizationPlatforms"
+              :key="category.category"
+              class="space-y-4"
+            >
+              <div class="border-l-4 border-amber-500 pl-4">
+                <h3 class="text-xl font-bold text-gray-800 mb-1">{{ category.category }}</h3>
+                <p class="text-sm text-gray-600">{{ category.description }}</p>
+              </div>
+              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <a
+                  v-for="platform in category.platforms"
+                  :key="platform.name"
+                  :href="platform.url"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  :class="[
+                    'p-4 rounded-lg border-2 transition-all duration-200 hover:shadow-lg hover:scale-105 cursor-pointer',
+                    platform.color,
+                    platform.name === '抖音' ? 'text-white' : ''
+                  ]"
+                >
+                  <div class="flex items-center space-x-3 mb-2">
+                    <span class="text-2xl">{{ platform.icon }}</span>
+                    <h4 :class="['font-bold', platform.name === '抖音' ? 'text-white' : 'text-gray-800']">{{ platform.name }}</h4>
+                  </div>
+                  <p :class="['text-xs leading-relaxed', platform.name === '抖音' ? 'text-gray-200' : 'text-gray-600']">{{ platform.description }}</p>
+                  <div :class="['mt-3 flex items-center text-xs font-medium', platform.name === '抖音' ? 'text-amber-300' : 'text-amber-600']">
+                    <ExternalLink class="w-3 h-3 mr-1" />
+                    <span>访问平台</span>
+                  </div>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 弹窗底部 -->
+        <div class="p-6 border-t border-gray-200 bg-gray-50">
+          <div class="bg-amber-50 border border-amber-200 rounded-lg p-4">
+            <p class="text-sm text-amber-800">
+              <span class="font-semibold">💡 推荐优先开通：</span>
+              知乎、小红书、头条号、百家号、B站、抖音、掘金、CSDN、InfoQ
+            </p>
           </div>
         </div>
       </div>
