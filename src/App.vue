@@ -389,7 +389,7 @@ const getPlatformButtonPosition = (index: number, total: number) => {
             <!-- 标题和介绍 -->
             <div class="text-center mb-8">
               <h1 class="text-4xl font-bold text-gray-800 mb-3">
-                矩阵联盟
+                矩阵联盟<span class="text-xl font-normal text-amber-600">（个人先行版）</span>
               </h1>
               <p class="text-lg text-gray-600 mb-2">
                 多平台内容创作者数据追踪与展示平台，实时监控矩阵账号运营数据
