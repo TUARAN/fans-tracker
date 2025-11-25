@@ -1,39 +1,38 @@
 # csdn-fans-tracker
 
-This template should help get you started developing with Vue 3 in Vite.
+一个围绕「技术创作者矩阵运营」打造的内容驾驶舱，集中展示安东尼内容团队在 CSDN、掘金、头条、知乎、InfoQ、公众号、微博、小红书等社区的成长轨迹。这里没有技术搭建教程，只有关于创作、账号矩阵与粉丝增长的故事。
 
-## Recommended IDE Setup
+## 平台定位
+- **创作中枢**：用数据和策略统一调度「安东尼漫长岁月」「安东尼404」「前端周看」「代码AI弗森」「三十而立方」等矩阵账号。
+- **运营仪表盘**：全网粉丝、阅读、收藏、点赞、文章同步刷新，配合动画数字感受增长脉搏。
+- **策略白皮书**：每个平台都有专属阶段定位、目标拆解、挑战与机会，形成一份可执行的增长路线。
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+## 内容体验
+- **数据驾驶舱**：
+  - 265 名 CSDN 粉丝、72 篇文章、41,583 阅读、35 篇/周输出、18,000 阅读周增等关键指标一目了然。
+  - 通过账号卡片快速切换各平台，了解粉丝结构、平台等级、历史涨幅和内容链接。
+- **平台成长计划**：
+  - 对 CSDN 等站点给出短中长期目标，结合策略、挑战与机会，形成类似 OKR 的运营日志。
+  - 按周写下版本化总结，例如 v0.0.2 阶段记录了热点文章策略带来 145 粉丝与 23,583 阅读的跃升。
+- **内容创作地图**：
+  - 写作计划将面试系列、技术热点、资源集合等主题拆成大纲、发布日期、关键词、投放平台和状态。
+  - 文章库保存了热门题材（如「Vue3 面试高频陷阱」「React 面试不背八股」）的阅读、点赞、评论表现，并标记是否由 AI 生成。
+- **灵感与节奏**：结合周视图、目标节点与内容标签，帮助团队快速回顾上一阶段的亮点、阻力与下一步任务。
 
-## Type Support for `.vue` Imports in TS
+## 适用人群
+- 需要管理多平台账号的个人创作者、内容团队或 MCN。
+- 希望用可视化方式呈现粉丝与内容积累的运营者。
+- 正在打造技术品牌，想要沉淀策略、计划、案例与灵感的创作者。
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
+## 如何阅读这个平台
+1. **从仪表盘开始**：观察全局数据、粉丝榜和矩阵账号画像，理解整体势能。
+2. **深入平台计划**：选择 CSDN 或其他渠道，查看阶段总结、增长杠杆、内容策略与周度里程碑。
+3. **打开文章管理**：在不同分类之间切换，查看每篇内容的表现，并用它们反推选题方向。
+4. **结合灵感库行动**：把计划、周总结与文章库串起来，搭建属于你自己的创作节奏。
 
-## Customize configuration
+## 我们正在思考
+- 如何在热点与深度之间取得平衡，让高频输出兼顾差异化价值。
+- 如何更聪明地调度矩阵账号，让每个平台都承担独特使命。
+- 如何借助数据反馈迭代选题，推动粉丝与阅读的可持续增长。
 
-See [Vite Configuration Reference](https://vite.dev/config/).
-
-## Project Setup
-
-```sh
-npm install
-```
-
-### Compile and Hot-Reload for Development
-
-```sh
-npm run dev
-```
-
-### Type-Check, Compile and Minify for Production
-
-```sh
-npm run build
-```
-
-### Lint with [ESLint](https://eslint.org/)
-
-```sh
-npm run lint
-```
+欢迎把它当成一本持续更新的内容运营手册，或直接用于你的创作指挥台。
