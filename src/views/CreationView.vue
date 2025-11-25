@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { useFansStore } from '@/stores/fans'
+import type { CommunityType } from '@/types'
 import { 
   FileText, 
   FolderOpen, 
@@ -11,10 +13,12 @@ import {
   Edit3,
   ExternalLink,
   Calendar,
-  Tag
+  Tag,
+  Globe
 } from 'lucide-vue-next'
 
 const router = useRouter()
+const fansStore = useFansStore()
 
 // 内容分类配置
 const categories = [
@@ -149,6 +153,141 @@ const openInIDE = (fileName: string, categoryId: string) => {
   // 可以通过vscode API或者其他方式打开文件
 }
 
+// 平台配置信息
+const platformConfigs: Record<CommunityType, { name: string; icon: string; color: string }> = {
+  csdn: { name: 'CSDN', icon: '📝', color: 'red' },
+  juejin: { name: '掘金', icon: '⛏️', color: 'blue' },
+  toutiao: { name: '头条', icon: '📰', color: 'orange' },
+  zhihu: { name: '知乎', icon: '🧠', color: 'cyan' },
+  _51cto: { name: '51CTO', icon: '💻', color: 'green' },
+  wechat: { name: '公众号', icon: '💬', color: 'green' },
+  weibo: { name: '微博', icon: '🐦', color: 'red' },
+  infoq: { name: 'InfoQ', icon: 'ℹ️', color: 'purple' },
+  xiaohongshu: { name: '小红书', icon: '📖', color: 'pink' }
+}
+
+// 获取平台颜色样式
+const getPlatformColors = (platform: CommunityType) => {
+  const colorMap: Record<CommunityType, { bg: string; hoverBg: string; border: string; hoverBorder: string; dot: string; text: string; icon: string }> = {
+    csdn: {
+      bg: 'bg-red-50',
+      hoverBg: 'hover:bg-red-100',
+      border: 'border-red-200',
+      hoverBorder: 'hover:border-red-300',
+      dot: 'bg-red-500',
+      text: 'text-gray-700',
+      icon: 'text-red-600'
+    },
+    juejin: {
+      bg: 'bg-blue-50',
+      hoverBg: 'hover:bg-blue-100',
+      border: 'border-blue-200',
+      hoverBorder: 'hover:border-blue-300',
+      dot: 'bg-blue-500',
+      text: 'text-gray-700',
+      icon: 'text-blue-600'
+    },
+    toutiao: {
+      bg: 'bg-orange-50',
+      hoverBg: 'hover:bg-orange-100',
+      border: 'border-orange-200',
+      hoverBorder: 'hover:border-orange-300',
+      dot: 'bg-orange-500',
+      text: 'text-gray-700',
+      icon: 'text-orange-600'
+    },
+    zhihu: {
+      bg: 'bg-cyan-50',
+      hoverBg: 'hover:bg-cyan-100',
+      border: 'border-cyan-200',
+      hoverBorder: 'hover:border-cyan-300',
+      dot: 'bg-cyan-500',
+      text: 'text-gray-700',
+      icon: 'text-cyan-600'
+    },
+    _51cto: {
+      bg: 'bg-green-50',
+      hoverBg: 'hover:bg-green-100',
+      border: 'border-green-200',
+      hoverBorder: 'hover:border-green-300',
+      dot: 'bg-green-500',
+      text: 'text-gray-700',
+      icon: 'text-green-600'
+    },
+    wechat: {
+      bg: 'bg-emerald-50',
+      hoverBg: 'hover:bg-emerald-100',
+      border: 'border-emerald-200',
+      hoverBorder: 'hover:border-emerald-300',
+      dot: 'bg-emerald-500',
+      text: 'text-gray-700',
+      icon: 'text-emerald-600'
+    },
+    weibo: {
+      bg: 'bg-rose-50',
+      hoverBg: 'hover:bg-rose-100',
+      border: 'border-rose-200',
+      hoverBorder: 'hover:border-rose-300',
+      dot: 'bg-rose-500',
+      text: 'text-gray-700',
+      icon: 'text-rose-600'
+    },
+    infoq: {
+      bg: 'bg-purple-50',
+      hoverBg: 'hover:bg-purple-100',
+      border: 'border-purple-200',
+      hoverBorder: 'hover:border-purple-300',
+      dot: 'bg-purple-500',
+      text: 'text-gray-700',
+      icon: 'text-purple-600'
+    },
+    xiaohongshu: {
+      bg: 'bg-pink-50',
+      hoverBg: 'hover:bg-pink-100',
+      border: 'border-pink-200',
+      hoverBorder: 'hover:border-pink-300',
+      dot: 'bg-pink-500',
+      text: 'text-gray-700',
+      icon: 'text-pink-600'
+    }
+  }
+  return colorMap[platform] || colorMap.csdn
+}
+
+// 获取所有账号的平台数据（用于显示）
+const allPlatformsData = computed(() => {
+  const platformsMap = new Map<CommunityType, Array<{ accountId: string; accountName: string; url?: string }>>()
+  
+  fansStore.matrixAccounts.forEach(account => {
+    account.platforms.forEach(platform => {
+      if (!platformsMap.has(platform)) {
+        platformsMap.set(platform, [])
+      }
+      const stats = fansStore.getAccountStats(account.id)
+      const url = stats?.platformStats?.[platform]?.url
+      platformsMap.get(platform)!.push({
+        accountId: account.id,
+        accountName: account.displayName || account.name,
+        url
+      })
+    })
+  })
+  
+  return Array.from(platformsMap.entries()).map(([platform, accounts]) => ({
+    platform,
+    accounts,
+    config: platformConfigs[platform]
+  }))
+})
+
+// 获取平台URL（与首页保持一致）
+const getPlatformUrl = (accountId: string, platform: CommunityType): string | undefined => {
+  const account = fansStore.matrixAccounts.find(acc => acc.id === accountId)
+  if (!account) return undefined
+  const stats = fansStore.getAccountStats(accountId)
+  return stats?.platformStats?.[platform]?.url
+}
+
 onMounted(() => {
   // 这里可以读取文件系统中的MD文件列表
   // 暂时使用空列表，后续可以根据实际文件系统读取
@@ -179,6 +318,60 @@ onMounted(() => {
             placeholder="搜索文章标题或标签..."
             class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent"
           />
+        </div>
+      </div>
+
+      <!-- 社区平台 -->
+      <div class="mb-8">
+        <div class="flex items-center space-x-3 mb-4">
+          <Globe class="w-5 h-5 text-gray-600" />
+          <h2 class="text-lg font-semibold text-gray-700">社区平台</h2>
+        </div>
+        <div class="bg-white rounded-lg border border-gray-200 shadow-sm p-4">
+          <div v-if="allPlatformsData.length === 0" class="text-center py-8">
+            <Globe class="w-12 h-12 text-gray-300 mx-auto mb-4" />
+            <p class="text-gray-500 text-sm">暂无平台数据</p>
+          </div>
+          <div v-else class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3">
+            <div
+              v-for="platformData in allPlatformsData"
+              :key="platformData.platform"
+              class="border-2 rounded-lg p-3 transition-all duration-200 hover:shadow-md"
+              :class="[
+                getPlatformColors(platformData.platform).border,
+                getPlatformColors(platformData.platform).bg,
+                getPlatformColors(platformData.platform).hoverBg
+              ]"
+            >
+              <div class="flex items-center space-x-2 mb-2">
+                <div :class="['w-2 h-2 rounded-full', getPlatformColors(platformData.platform).dot]"></div>
+                <span class="text-lg">{{ platformData.config.icon }}</span>
+                <h3 class="font-semibold text-gray-800 text-sm">{{ platformData.config.name }}</h3>
+              </div>
+              <div class="space-y-1.5">
+                <template v-for="account in platformData.accounts" :key="account.accountId">
+                  <a
+                    v-if="getPlatformUrl(account.accountId, platformData.platform)"
+                    :href="getPlatformUrl(account.accountId, platformData.platform)"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="flex items-center justify-between p-1.5 rounded-lg cursor-pointer transition-all hover:bg-white/60"
+                    :class="getPlatformColors(platformData.platform).hoverBg"
+                  >
+                    <span class="text-xs font-medium text-gray-700 truncate">{{ account.accountName }}</span>
+                    <ExternalLink :class="['w-3 h-3 flex-shrink-0 ml-1', getPlatformColors(platformData.platform).icon]" />
+                  </a>
+                  <div
+                    v-else
+                    class="flex items-center justify-between p-1.5 rounded-lg cursor-default opacity-60"
+                  >
+                    <span class="text-xs font-medium text-gray-700 truncate">{{ account.accountName }}</span>
+                    <ExternalLink :class="['w-3 h-3 flex-shrink-0 ml-1 text-gray-400']" />
+                  </div>
+                </template>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
