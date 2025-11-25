@@ -16,6 +16,11 @@ const router = createRouter({
       path: '/plan/:platform/:account',
       name: '平台计划',
       component: () => import('@/views/PlatformPlanView.vue')
+    },
+    {
+      path: '/creation',
+      name: '创作与分发',
+      component: () => import('@/views/CreationView.vue')
     }
   ],
 })

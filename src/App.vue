@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { useFansStore } from '@/stores/fans'
 import { computed, ref, watch, onMounted } from 'vue'
-import { Users, Eye, Sparkles, Zap, FileText, BarChart3, ExternalLink } from 'lucide-vue-next'
+import { Users, Eye, Sparkles, Zap, FileText, BarChart3, ExternalLink, Edit3, BookOpen } from 'lucide-vue-next'
+import { useRouter, useRoute } from 'vue-router'
 import type { CommunityType } from '@/types'
 import { use } from 'echarts/core'
 import { CanvasRenderer } from 'echarts/renderers'
@@ -22,6 +23,19 @@ use([
 ])
 
 const fansStore = useFansStore()
+const router = useRouter()
+const route = useRoute()
+
+// 判断是否在首页
+const isHomePage = computed(() => route.path === '/' || route.path === '/dashboard')
+
+// 处理创作与分发按钮点击
+const handleCreationClick = () => {
+  console.log('点击创作与分发按钮，准备跳转到 /creation')
+  router.push('/creation').catch(err => {
+    console.error('路由跳转失败:', err)
+  })
+}
 
 // 从store获取数据
 const activeAccount = computed(() => fansStore.currentSelectedAccount)
@@ -348,13 +362,34 @@ const getPlatformButtonPosition = (index: number, total: number) => {
   <div id="app" class="min-h-screen bg-white">
     <!-- 主内容区域 -->
     <div class="min-h-screen">
-        <!-- 极简Banner区域 -->
-        <div class="relative overflow-hidden">
+        <!-- 极简Banner区域 - 只在首页显示 -->
+        <div v-if="isHomePage" class="relative overflow-hidden">
           <div class="relative z-10 max-w-6xl mx-auto px-6 py-8">
+            <!-- 导航栏 -->
+            <div class="flex justify-end gap-3 mb-6">
+              <button
+                @click="handleCreationClick"
+                class="flex items-center space-x-2 px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-lg transition-colors shadow-md hover:shadow-lg cursor-pointer"
+              >
+                <Edit3 class="w-4 h-4" />
+                <span>创作与分发</span>
+              </button>
+              <a
+                href="https://awesome-prompt-seven.vercel.app/tutorials"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="flex items-center space-x-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors shadow-md hover:shadow-lg cursor-pointer"
+              >
+                <BookOpen class="w-4 h-4" />
+                <span>写作上下文</span>
+                <ExternalLink class="w-3 h-3" />
+              </a>
+            </div>
+            
             <!-- 标题和介绍 -->
             <div class="text-center mb-8">
               <h1 class="text-4xl font-bold text-gray-800 mb-3">
-                个人矩阵号
+                矩阵联盟
               </h1>
               <p class="text-lg text-gray-600 mb-2">
                 多平台内容创作者数据追踪与展示平台，实时监控矩阵账号运营数据
