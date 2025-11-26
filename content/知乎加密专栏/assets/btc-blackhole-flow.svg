@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="820" height="460" viewBox="0 0 820 460" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      .title { font: 600 28px "Helvetica Neue", Arial, sans-serif; fill: #0f172a; }
+      .subtitle { font: 16px "Helvetica Neue", Arial, sans-serif; fill: #475569; }
+      .label { font: 14px "Helvetica Neue", Arial, sans-serif; fill: #0f172a; }
+      .small { font: 12px "Helvetica Neue", Arial, sans-serif; fill: #475569; }
+      .box { fill: #e0f2fe; stroke: #0ea5e9; stroke-width: 2; rx: 12; }
+      .burn { fill: #fee2e2; stroke: #ef4444; stroke-width: 2; rx: 12; }
+      .effect { fill: #fef9c3; stroke: #facc15; stroke-width: 2; rx: 12; }
+      .line { stroke: #94a3b8; stroke-width: 2; marker-end: url(#arrow); }
+      .dashed { stroke-dasharray: 6 6; }
+    </style>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="5" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L6,3 z" fill="#94a3b8"/>
+    </marker>
+  </defs>
+  <rect width="820" height="460" fill="#ffffff"/>
+
+  <text x="50" y="60" class="title">BTC Blackhole Flow</text>
+  <text x="50" y="88" class="subtitle">发行 → 流通 → 烧毁地址 → 供需与叙事</text>
+
+  <!-- Flow boxes -->
+  <rect x="60" y="130" width="180" height="120" class="box"/>
+  <text x="150" y="180" class="label" text-anchor="middle">活跃 UTXO</text>
+  <text x="150" y="204" class="small" text-anchor="middle">矿工奖励 / 流通筹码</text>
+
+  <rect x="320" y="130" width="190" height="120" class="box"/>
+  <text x="415" y="170" class="label" text-anchor="middle">链上流转</text>
+  <text x="415" y="194" class="small" text-anchor="middle">交易所 / DeFi /铭文</text>
+
+  <rect x="580" y="110" width="190" height="160" class="burn"/>
+  <text x="675" y="150" class="label" text-anchor="middle">黑洞地址</text>
+  <text x="675" y="174" class="small" text-anchor="middle">1BitcoinEater... </text>
+  <text x="675" y="196" class="small" text-anchor="middle">Counterparty PoB</text>
+  <text x="675" y="218" class="small" text-anchor="middle">bc1qqqq... / OP_RETURN</text>
+
+  <!-- Effects -->
+  <rect x="120" y="300" width="180" height="110" class="effect"/>
+  <text x="210" y="340" class="label" text-anchor="middle">有效供应下降</text>
+  <text x="210" y="364" class="small" text-anchor="middle">稀缺叙事 + 波动放大</text>
+
+  <rect x="360" y="300" width="180" height="110" class="effect"/>
+  <text x="450" y="340" class="label" text-anchor="middle">PoB &amp; 铭文玩法</text>
+  <text x="450" y="364" class="small" text-anchor="middle">Stacks / Counterparty</text>
+
+  <rect x="600" y="300" width="180" height="110" class="effect"/>
+  <text x="690" y="340" class="label" text-anchor="middle">风险提示</text>
+  <text x="690" y="364" class="small" text-anchor="middle">误转=永久损失</text>
+
+  <!-- Lines -->
+  <line x1="240" y1="190" x2="320" y2="190" class="line"/>
+  <line x1="510" y1="190" x2="580" y2="190" class="line"/>
+  <line x1="675" y1="270" x2="210" y2="300" class="line dashed"/>
+  <line x1="675" y1="270" x2="450" y2="300" class="line dashed"/>
+  <line x1="675" y1="270" x2="690" y2="300" class="line dashed"/>
+</svg>
