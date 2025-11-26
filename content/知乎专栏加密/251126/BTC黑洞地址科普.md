@@ -2,7 +2,7 @@
 
 👀👀 一天一篇链上冷知识，今天聊的是「黑洞地址」：那些故意或意外把 BTC 永久锁死、再也花不出去的地址。它不是黑客专用的魔法账号，而是一个没有私钥或无法签名的地址集合。本文带你拆解它们的来历、识别方法、供需影响以及如何在链上验证。
 
-![BTC Blackhole Flow](https://raw.githubusercontent.com/TUARAN/fans-tracker/refs/heads/master/content/%E7%9F%A5%E4%B9%8E%E5%8A%A0%E5%AF%86%E4%B8%93%E6%A0%8F/assets/btc-blackhole-flow.svg)
+![BTC Blackhole Flow](https://raw.githubusercontent.com/TUARAN/fans-tracker/refs/heads/master/content/%E7%9F%A5%E4%B9%8E%E4%B8%93%E6%A0%8F%E5%8A%A0%E5%AF%86/251126/assets/btc-blackhole-flow.svg)
 
 ## 01 黑洞地址是什么？
 黑洞地址（Blackhole Address / Burn Address）指无法生成有效私钥、也无法签名支出的地址。它们通常具备以下特征：

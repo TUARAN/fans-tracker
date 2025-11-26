@@ -2,7 +2,7 @@
 
 👀👀 一天分享一个加密项目，今天聊聊 Story Protocol（代币符号：IP）。这个项目不是传统意义上的“买IP分红”，而是一条专为知识产权打造的 Layer 1 区块链，让故事、角色、音乐甚至 AI 生成内容都能“上链登记、自动授权、实时分账”。
 
-![Story Protocol Stack](https://raw.githubusercontent.com/TUARAN/fans-tracker/refs/heads/master/content/%E7%9F%A5%E4%B9%8E%E5%8A%A0%E5%AF%86%E4%B8%93%E6%A0%8F/assets/ip-token-architecture.svg)
+![Story Protocol Stack](https://raw.githubusercontent.com/TUARAN/fans-tracker/refs/heads/master/content/%E7%9F%A5%E4%B9%8E%E4%B8%93%E6%A0%8F%E5%8A%A0%E5%AF%86/251126/assets/ip-token-architecture.svg)
 
 ## 01 Story Protocol（IP）是什么？
 Story Protocol 是一条定位极其明确的 L1：它把自己当作“全球数字版权注册中心 + 自动化授权中介”。无论是漫画角色、小说世界观还是 AI 生成的设定，都可以在链上铸造成可追踪、可编程的 IP Token。  
