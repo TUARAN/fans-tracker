@@ -798,7 +798,7 @@ export const usePlansStore = defineStore('plans', () => {
         thoughtNotes: []
       }
     },
-    '代码AI弗森': {
+    '安东尼与AI': {
       csdn: {
         platform: 'csdn',
         currentStatus: {

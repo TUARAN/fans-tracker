@@ -122,8 +122,8 @@ export const useFansStore = defineStore('fans', () => {
     },
     {
       id: 'code-ai-frosen',
-      name: '代码AI弗森',
-      displayName: '代码AI弗森',
+      name: '安东尼与AI',
+      displayName: '安东尼与AI',
       description: '大模型实践者',
       avatar: '🤖',
       themeColor: 'amber',
@@ -506,7 +506,7 @@ export const useFansStore = defineStore('fans', () => {
       }
     ]
 
-    // 代码AI弗森账号数据
+    // 安东尼与AI账号数据
     const aifsData: FanData[] = [
       {
         id: 'aifs-csdn-1',
