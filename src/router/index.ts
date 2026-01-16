@@ -21,6 +21,16 @@ const router = createRouter({
       path: '/creation',
       name: '创作与分发',
       component: () => import('@/views/CreationView.vue')
+    },
+    {
+      path: '/writing-context',
+      name: '写作上下文',
+      component: () => import('@/views/WritingContextView.vue')
+    },
+    {
+      path: '/monetization',
+      name: '写即有钱',
+      component: () => import('@/views/MonetizationView.vue')
     }
   ],
 })

@@ -15,8 +15,10 @@
     "@vueuse/core": "^10.7.0",
     "axios": "^1.6.0",
     "dayjs": "^1.11.10",
+    "dompurify": "^3.3.1",
     "echarts": "^5.4.3",
     "lucide-vue-next": "^0.294.0",
+    "marked": "^17.0.1",
     "pinia": "^3.0.3",
     "vue": "^3.5.17",
     "vue-echarts": "^6.6.1",
@@ -24,6 +26,7 @@
   },
   "devDependencies": {
     "@tsconfig/node18": "^18.2.2",
+    "@types/dompurify": "^3.0.5",
     "@types/eslint": "^9.6.1",
     "@types/node": "^18.19.0",
     "@vitejs/plugin-vue": "^4.5.0",

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useFansStore } from '@/stores/fans'
 import { computed, ref, watch, onMounted } from 'vue'
-import { Users, Eye, Sparkles, Zap, FileText, BarChart3, ExternalLink, Edit3, BookOpen } from 'lucide-vue-next'
+import { Users, Eye, Sparkles, Zap, FileText, BarChart3, Edit3, BookOpen, DollarSign } from 'lucide-vue-next'
 import { useRouter, useRoute } from 'vue-router'
 import type { CommunityType } from '@/types'
 import { use } from 'echarts/core'
@@ -33,6 +33,19 @@ const isHomePage = computed(() => route.path === '/' || route.path === '/dashboa
 const handleCreationClick = () => {
   console.log('点击创作与分发按钮，准备跳转到 /creation')
   router.push('/creation').catch(err => {
+    console.error('路由跳转失败:', err)
+  })
+}
+
+// 处理写作上下文按钮点击（站内跳转到写作指令区块）
+const handleWritingContextClick = () => {
+  router.push({ path: '/writing-context' }).catch(err => {
+    console.error('路由跳转失败:', err)
+  })
+}
+
+const handleMonetizationClick = () => {
+  router.push({ path: '/monetization' }).catch(err => {
     console.error('路由跳转失败:', err)
   })
 }
@@ -368,28 +381,32 @@ const getPlatformButtonPosition = (index: number, total: number) => {
             <!-- 导航栏 -->
             <div class="flex justify-end gap-3 mb-6">
               <button
+                @click="handleMonetizationClick"
+                class="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-lg hover:from-amber-600 hover:to-orange-600 transition-all duration-200 shadow-md hover:shadow-lg cursor-pointer"
+              >
+                <DollarSign class="w-4 h-4" />
+                <span>写即有钱</span>
+              </button>
+              <button
                 @click="handleCreationClick"
                 class="flex items-center space-x-2 px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-lg transition-colors shadow-md hover:shadow-lg cursor-pointer"
               >
                 <Edit3 class="w-4 h-4" />
                 <span>创作与分发</span>
               </button>
-              <a
-                href="https://awesome-prompt-seven.vercel.app/tutorials"
-                target="_blank"
-                rel="noopener noreferrer"
+              <button
+                @click="handleWritingContextClick"
                 class="flex items-center space-x-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors shadow-md hover:shadow-lg cursor-pointer"
               >
                 <BookOpen class="w-4 h-4" />
                 <span>写作上下文</span>
-                <ExternalLink class="w-3 h-3" />
-              </a>
+              </button>
             </div>
             
             <!-- 标题和介绍 -->
             <div class="text-center mb-8">
               <h1 class="text-4xl font-bold text-gray-800 mb-3">
-                矩阵先锋<span class="text-xl font-normal text-amber-600">（个人先行版）</span>
+                矩阵号001
               </h1>
               <p class="text-lg text-gray-600 mb-2">
                 多平台内容创作者数据追踪与展示平台，实时监控矩阵账号运营数据
