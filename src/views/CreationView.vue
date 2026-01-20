@@ -3,6 +3,8 @@ import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useFansStore } from '@/stores/fans'
 import type { CommunityType } from '@/types'
+import { marked } from 'marked'
+import DOMPurify from 'dompurify'
 import { 
   FileText, 
   FolderOpen, 
@@ -20,72 +22,17 @@ import {
 const router = useRouter()
 const fansStore = useFansStore()
 
-// 内容分类配置
-const categories = [
-  {
-    id: 'csdn-high-score',
-    name: 'CSDN高分文章',
-    icon: '📝',
-    color: 'bg-red-50 border-red-200 text-red-700',
-    hoverColor: 'hover:bg-red-100 hover:border-red-300',
-    dotColor: 'bg-red-500',
-    description: '在CSDN平台发布的高分文章'
-  },
-  {
-    id: 'zhihu-encrypted',
-    name: '知乎加密专栏',
-    icon: '🔒',
-    color: 'bg-cyan-50 border-cyan-200 text-cyan-700',
-    hoverColor: 'hover:bg-cyan-100 hover:border-cyan-300',
-    dotColor: 'bg-cyan-500',
-    description: '知乎平台的加密专栏内容'
-  },
-  {
-    id: 'xiaohongshu-article',
-    name: '小红书长文',
-    icon: '📖',
-    color: 'bg-pink-50 border-pink-200 text-pink-700',
-    hoverColor: 'hover:bg-pink-100 hover:border-pink-300',
-    dotColor: 'bg-pink-500',
-    description: '小红书平台的长文内容'
-  },
-  {
-    id: 'repost-remix',
-    name: '转载二创',
-    icon: '♻️',
-    color: 'bg-purple-50 border-purple-200 text-purple-700',
-    hoverColor: 'hover:bg-purple-100 hover:border-purple-300',
-    dotColor: 'bg-purple-500',
-    description: '转载并二次创作的内容'
-  },
-  {
-    id: 'deep-thinking',
-    name: '深度思考',
-    icon: '💭',
-    color: 'bg-blue-50 border-blue-200 text-blue-700',
-    hoverColor: 'hover:bg-blue-100 hover:border-blue-300',
-    dotColor: 'bg-blue-500',
-    description: '深度思考类原创内容'
-  },
-  {
-    id: 'inbox',
-    name: 'INBOX-待归类',
-    icon: '📥',
-    color: 'bg-gray-50 border-gray-200 text-gray-700',
-    hoverColor: 'hover:bg-gray-100 hover:border-gray-300',
-    dotColor: 'bg-gray-500',
-    description: '待分类和整理的内容'
-  }
-]
+type ContentCategoryConfig = {
+  id: string
+  name: string
+  icon: string
+  color: string
+  hoverColor: string
+  dotColor: string
+  description: string
+}
 
-// 当前选中的分类
-const selectedCategory = ref<string | null>(null)
-
-// 搜索关键词
-const searchKeyword = ref('')
-
-// 文章列表（模拟数据，后续可以从文件系统读取）
-const articles = ref<Array<{
+type ContentArticle = {
   id: string
   title: string
   category: string
@@ -94,7 +41,232 @@ const articles = ref<Array<{
   fileName: string
   status: 'draft' | 'published' | 'archived'
   tags: string[]
-}>>([])
+}
+
+const CONTENT_ROOT = 'content'
+
+const categoryPresets: Record<string, Omit<ContentCategoryConfig, 'id' | 'name'>> = {
+  'CSDN高分文章': {
+    icon: '📝',
+    color: 'bg-red-50 border-red-200 text-red-700',
+    hoverColor: 'hover:bg-red-100 hover:border-red-300',
+    dotColor: 'bg-red-500',
+    description: '在CSDN平台发布的高分文章'
+  },
+  '知乎专栏加密': {
+    icon: '🔒',
+    color: 'bg-cyan-50 border-cyan-200 text-cyan-700',
+    hoverColor: 'hover:bg-cyan-100 hover:border-cyan-300',
+    dotColor: 'bg-cyan-500',
+    description: '知乎平台的加密专栏内容'
+  },
+  '小红书长文': {
+    icon: '📖',
+    color: 'bg-pink-50 border-pink-200 text-pink-700',
+    hoverColor: 'hover:bg-pink-100 hover:border-pink-300',
+    dotColor: 'bg-pink-500',
+    description: '小红书平台的长文内容'
+  },
+  '转载二创': {
+    icon: '♻️',
+    color: 'bg-purple-50 border-purple-200 text-purple-700',
+    hoverColor: 'hover:bg-purple-100 hover:border-purple-300',
+    dotColor: 'bg-purple-500',
+    description: '转载并二次创作的内容'
+  },
+  '深度思考': {
+    icon: '💭',
+    color: 'bg-blue-50 border-blue-200 text-blue-700',
+    hoverColor: 'hover:bg-blue-100 hover:border-blue-300',
+    dotColor: 'bg-blue-500',
+    description: '深度思考类原创内容'
+  },
+  'INBOX-待归类': {
+    icon: '📥',
+    color: 'bg-gray-50 border-gray-200 text-gray-700',
+    hoverColor: 'hover:bg-gray-100 hover:border-gray-300',
+    dotColor: 'bg-gray-500',
+    description: '待分类和整理的内容'
+  },
+  '编程技术': {
+    icon: '🧰',
+    color: 'bg-blue-50 border-blue-200 text-blue-700',
+    hoverColor: 'hover:bg-blue-100 hover:border-blue-300',
+    dotColor: 'bg-blue-500',
+    description: '编程与工程化相关内容'
+  },
+  '儿童绘本': {
+    icon: '🧸',
+    color: 'bg-pink-50 border-pink-200 text-pink-700',
+    hoverColor: 'hover:bg-pink-100 hover:border-pink-300',
+    dotColor: 'bg-pink-500',
+    description: '儿童绘本主题内容'
+  }
+}
+
+function parseYyMmDd(seg: string): string | null {
+  if (!/^\d{6}$/.test(seg)) return null
+  const yy = Number(seg.slice(0, 2))
+  const mm = Number(seg.slice(2, 4))
+  const dd = Number(seg.slice(4, 6))
+  if (!Number.isFinite(yy) || !Number.isFinite(mm) || !Number.isFinite(dd)) return null
+  if (mm < 1 || mm > 12 || dd < 1 || dd > 31) return null
+  const yyyy = yy <= 69 ? 2000 + yy : 1900 + yy
+  const pad2 = (n: number) => String(n).padStart(2, '0')
+  return `${yyyy}-${pad2(mm)}-${pad2(dd)}`
+}
+
+function safeDecode(text: string): string {
+  try {
+    return decodeURIComponent(text)
+  } catch {
+    return text
+  }
+}
+
+function isArticleMarkdownPath(path: string): boolean {
+  const normalized = path.toLowerCase()
+  if (!normalized.endsWith('.md')) return false
+  if (normalized.endsWith('/readme.md')) return false
+  if (normalized.endsWith('/theme.md')) return false
+  if (normalized.includes('/assets/')) return false
+  return true
+}
+
+// 扫描 content 目录下所有 Markdown（构建期可得路径列表）
+const contentMdModuleMap = import.meta.glob('/content/**/*.md') as Record<string, () => Promise<unknown>>
+const contentMdPaths = Object.keys(contentMdModuleMap)
+
+const allCategoryNames = Array.from(
+  new Set(
+    contentMdPaths
+      .filter(p => !p.includes('/assets/'))
+      .map(p => {
+        const parts = p.split('/').filter(Boolean)
+        const idx = parts.indexOf(CONTENT_ROOT)
+        return idx >= 0 ? parts[idx + 1] : ''
+      })
+      .filter(Boolean)
+      .map(safeDecode)
+  )
+).sort((a, b) => a.localeCompare(b, 'zh-CN'))
+
+// 内容分类配置（id = content 一级目录名）
+const categories: ContentCategoryConfig[] = allCategoryNames.map(name => {
+  const preset = categoryPresets[name]
+  return {
+    id: name,
+    name,
+    icon: preset?.icon ?? '📄',
+    color: preset?.color ?? 'bg-gray-50 border-gray-200 text-gray-700',
+    hoverColor: preset?.hoverColor ?? 'hover:bg-gray-100 hover:border-gray-300',
+    dotColor: preset?.dotColor ?? 'bg-gray-500',
+    description: preset?.description ?? '内容分类'
+  }
+})
+
+// 写作上下文：读取每个分类的 README.md（如果存在）
+const readmeRawMap = import.meta.glob('/content/**/README.md', {
+  query: '?raw',
+  import: 'default',
+  eager: true
+}) as Record<string, string>
+
+const categoryReadmeMap = computed<Record<string, string>>(() => {
+  const map: Record<string, string> = {}
+  for (const [path, raw] of Object.entries(readmeRawMap)) {
+    const parts = path.split('/').filter(Boolean)
+    const idx = parts.indexOf(CONTENT_ROOT)
+    const categoryName = idx >= 0 ? safeDecode(parts[idx + 1] ?? '') : ''
+    if (!categoryName) continue
+    map[categoryName] = raw
+  }
+  return map
+})
+
+const contextViewMode = ref<'preview' | 'raw'>('preview')
+const contextCopied = ref(false)
+
+const selectedContextRaw = computed(() => {
+  if (!selectedCategory.value) return ''
+  return categoryReadmeMap.value[selectedCategory.value] ?? ''
+})
+
+const selectedContextHtml = computed(() => {
+  const raw = selectedContextRaw.value
+  if (!raw) return ''
+  const html = marked.parse(raw) as string
+  return DOMPurify.sanitize(html)
+})
+
+async function copyContext() {
+  const text = selectedContextRaw.value
+  if (!text) return
+  try {
+    await navigator.clipboard.writeText(text)
+  } catch {
+    const textarea = document.createElement('textarea')
+    textarea.value = text
+    textarea.setAttribute('readonly', 'true')
+    textarea.style.position = 'fixed'
+    textarea.style.left = '-9999px'
+    document.body.appendChild(textarea)
+    textarea.select()
+    document.execCommand('copy')
+    document.body.removeChild(textarea)
+  }
+  contextCopied.value = true
+  window.setTimeout(() => (contextCopied.value = false), 1200)
+}
+
+// 当前选中的分类
+const selectedCategory = ref<string | null>(null)
+
+// 搜索关键词
+const searchKeyword = ref('')
+
+// 文章列表（来自 content/**/*.md；README/theme/assets 会被排除）
+const articles = computed<ContentArticle[]>(() => {
+  const result: ContentArticle[] = []
+
+  for (const path of contentMdPaths) {
+    if (!isArticleMarkdownPath(path)) continue
+
+    const parts = path.split('/').filter(Boolean)
+    const idx = parts.indexOf(CONTENT_ROOT)
+    if (idx < 0 || idx + 1 >= parts.length) continue
+    const categoryName = safeDecode(parts[idx + 1])
+    if (!categoryName) continue
+
+    const relativeParts = parts.slice(idx + 2).map(safeDecode)
+    const relativePath = relativeParts.join('/')
+    const fileLeaf = relativeParts[relativeParts.length - 1] ?? ''
+    const title = fileLeaf.replace(/\.md$/i, '')
+
+    const dateSeg = relativeParts.find(seg => /^\d{6}$/.test(seg))
+    const parsedDate = dateSeg ? parseYyMmDd(dateSeg) : null
+    const createTime = parsedDate ?? ''
+    const updateTime = parsedDate ?? ''
+
+    const status: ContentArticle['status'] = categoryName.includes('INBOX') ? 'draft' : 'published'
+
+    const tagCandidate = relativeParts[0]
+    const tags = tagCandidate && !/^\d{6}$/.test(tagCandidate) ? [tagCandidate] : []
+
+    result.push({
+      id: path,
+      title,
+      category: categoryName,
+      createTime,
+      updateTime,
+      fileName: relativePath,
+      status,
+      tags
+    })
+  }
+
+  return result
+})
 
 // 根据分类筛选文章
 const filteredArticles = computed(() => {
@@ -115,7 +287,7 @@ const filteredArticles = computed(() => {
   }
 
   // 按更新时间倒序排列
-  return result.sort((a, b) => new Date(b.updateTime).getTime() - new Date(a.updateTime).getTime())
+  return result.sort((a, b) => new Date(b.updateTime || 0).getTime() - new Date(a.updateTime || 0).getTime())
 })
 
 // 获取分类信息
@@ -135,7 +307,9 @@ const getCategoryArticleCount = (categoryId: string) => {
 
 // 格式化日期
 const formatDate = (dateString: string) => {
+  if (!dateString) return '--'
   const date = new Date(dateString)
+  if (Number.isNaN(date.getTime())) return '--'
   return date.toLocaleDateString('zh-CN', {
     year: 'numeric',
     month: '2-digit',
@@ -147,8 +321,7 @@ const formatDate = (dateString: string) => {
 const openInIDE = (fileName: string, categoryId: string) => {
   // 这里可以触发VS Code的打开文件命令
   // 实际实现可能需要与IDE API集成
-  const categoryName = getCategoryInfo(categoryId).name
-  const filePath = `content/${categoryName}/${fileName}`
+  const filePath = `content/${categoryId}/${fileName}`
   console.log('打开文件:', filePath)
   // 可以通过vscode API或者其他方式打开文件
 }
@@ -477,6 +650,64 @@ onMounted(() => {
         </div>
       </div>
 
+      <!-- 写作上下文（融合进创作与分发） -->
+      <div class="bg-white rounded-lg border border-gray-200 shadow-sm mb-8">
+        <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between gap-3">
+          <div class="flex items-center space-x-2 min-w-0">
+            <BookOpen class="w-5 h-5 text-gray-600" />
+            <h2 class="text-lg font-semibold text-gray-700">写作上下文</h2>
+            <span v-if="selectedCategory" class="text-xs text-gray-500 hidden sm:inline truncate">
+              来自 content/{{ selectedCategory }}/README.md
+            </span>
+            <span v-else class="text-xs text-gray-500 hidden sm:inline">
+              请选择一个内容分类
+            </span>
+          </div>
+
+          <div class="flex items-center gap-2 flex-shrink-0">
+            <div class="inline-flex rounded-lg border border-gray-200 bg-gray-50 p-1">
+              <button
+                class="px-3 py-1.5 text-xs font-medium rounded-md transition-colors"
+                :class="contextViewMode === 'preview' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-600 hover:text-gray-900'"
+                @click="contextViewMode = 'preview'"
+                :disabled="!selectedCategory"
+              >
+                Markdown 预览
+              </button>
+              <button
+                class="px-3 py-1.5 text-xs font-medium rounded-md transition-colors"
+                :class="contextViewMode === 'raw' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-600 hover:text-gray-900'"
+                @click="contextViewMode = 'raw'"
+                :disabled="!selectedCategory"
+              >
+                纯文本
+              </button>
+            </div>
+
+            <button
+              class="px-3 py-2 text-xs font-medium rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:hover:bg-blue-600"
+              @click="copyContext"
+              :disabled="!selectedCategory || !selectedContextRaw"
+            >
+              {{ contextCopied ? '已复制' : '复制命令' }}
+            </button>
+          </div>
+        </div>
+
+        <div v-if="!selectedCategory" class="p-6 text-sm text-gray-500">
+          点击上面的“内容分类”，这里会显示对应的写作指令（README）。
+        </div>
+
+        <div v-else-if="!selectedContextRaw" class="p-6 text-sm text-gray-500">
+          该分类下未找到 README 指令文档（content/{{ selectedCategory }}/README.md）。
+        </div>
+
+        <div v-else class="p-6 max-h-[60vh] overflow-auto">
+          <div v-if="contextViewMode === 'preview'" class="markdown-body text-sm leading-7 text-gray-700" v-html="selectedContextHtml" />
+          <pre v-else class="whitespace-pre-wrap text-sm leading-6 text-gray-700">{{ selectedContextRaw }}</pre>
+        </div>
+      </div>
+
       <!-- 文章列表 -->
       <div class="bg-white rounded-lg border border-gray-200 shadow-sm">
         <div class="p-6 border-b border-gray-200">
@@ -597,6 +828,63 @@ onMounted(() => {
 <style scoped>
 code {
   font-family: 'Courier New', monospace;
+}
+
+.markdown-body :deep(h1) {
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+  font-weight: 700;
+  margin: 0 0 0.75rem 0;
+}
+.markdown-body :deep(h2) {
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+  font-weight: 700;
+  margin: 1rem 0 0.5rem 0;
+}
+.markdown-body :deep(h3) {
+  font-size: 1rem;
+  line-height: 1.5rem;
+  font-weight: 700;
+  margin: 0.75rem 0 0.25rem 0;
+}
+.markdown-body :deep(p) {
+  margin: 0.5rem 0;
+}
+.markdown-body :deep(ul),
+.markdown-body :deep(ol) {
+  margin: 0.5rem 0 0.5rem 1.25rem;
+}
+.markdown-body :deep(li) {
+  margin: 0.25rem 0;
+}
+.markdown-body :deep(code) {
+  background: rgb(243 244 246);
+  padding: 0.125rem 0.375rem;
+  border-radius: 0.375rem;
+  font-size: 0.875em;
+}
+.markdown-body :deep(pre) {
+  background: rgb(17 24 39);
+  color: rgb(243 244 246);
+  padding: 0.75rem;
+  border-radius: 0.75rem;
+  overflow: auto;
+  margin: 0.75rem 0;
+}
+.markdown-body :deep(pre code) {
+  background: transparent;
+  padding: 0;
+}
+.markdown-body :deep(blockquote) {
+  border-left: 4px solid rgb(209 213 219);
+  padding-left: 0.75rem;
+  color: rgb(75 85 99);
+  margin: 0.75rem 0;
+}
+.markdown-body :deep(a) {
+  color: rgb(37 99 235);
+  text-decoration: underline;
 }
 </style>
 

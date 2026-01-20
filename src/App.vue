@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useFansStore } from '@/stores/fans'
 import { computed, ref, watch, onMounted } from 'vue'
-import { Users, Eye, Sparkles, Zap, FileText, BarChart3, Edit3, BookOpen, DollarSign } from 'lucide-vue-next'
+import { Users, Eye, Sparkles, Zap, FileText, BarChart3, Edit3, DollarSign } from 'lucide-vue-next'
 import { useRouter, useRoute } from 'vue-router'
 import type { CommunityType } from '@/types'
 import { use } from 'echarts/core'
@@ -33,13 +33,6 @@ const isHomePage = computed(() => route.path === '/' || route.path === '/dashboa
 const handleCreationClick = () => {
   console.log('点击创作与分发按钮，准备跳转到 /creation')
   router.push('/creation').catch(err => {
-    console.error('路由跳转失败:', err)
-  })
-}
-
-// 处理写作上下文按钮点击（站内跳转到写作指令区块）
-const handleWritingContextClick = () => {
-  router.push({ path: '/writing-context' }).catch(err => {
     console.error('路由跳转失败:', err)
   })
 }
@@ -394,25 +387,18 @@ const getPlatformButtonPosition = (index: number, total: number) => {
                 <Edit3 class="w-4 h-4" />
                 <span>创作与分发</span>
               </button>
-              <button
-                @click="handleWritingContextClick"
-                class="flex items-center space-x-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors shadow-md hover:shadow-lg cursor-pointer"
-              >
-                <BookOpen class="w-4 h-4" />
-                <span>写作上下文</span>
-              </button>
             </div>
             
             <!-- 标题和介绍 -->
             <div class="text-center mb-8">
               <h1 class="text-4xl font-bold text-gray-800 mb-3">
-                矩阵号001
+                <a href="https://tuaran.me/" target="_blank" class="text-amber-600 hover:text-amber-700 underline decoration-2 underline-offset-4 transition-colors duration-200 cursor-pointer">TUARAN</a> 全网数据面板
               </h1>
               <p class="text-lg text-gray-600 mb-2">
                 多平台内容创作者数据追踪与展示平台，实时监控矩阵账号运营数据
               </p>
               <div class="flex items-center justify-center space-x-4 text-sm text-gray-500">
-                <span>数据更新时间：2025年11月14日</span>
+                <span>数据更新时间：2026年1月20日</span>
                 <span class="flex items-center space-x-2">
                   <span class="relative flex items-center">
                     <span class="absolute w-2 h-2 bg-amber-500 rounded-full animate-ping"></span>
@@ -457,7 +443,7 @@ const getPlatformButtonPosition = (index: number, total: number) => {
                 </div>
               </div>
 
-              <!-- 全网文章数 -->
+              <!-- 全网文章/发帖数 -->
               <div class="bg-white rounded-xl p-6 border border-emerald-200 shadow-md hover:shadow-lg transition-all duration-300">
                 <div class="flex items-center space-x-4">
                   <div class="w-12 h-12 bg-gradient-to-br from-emerald-400 to-green-500 rounded-lg flex items-center justify-center shadow-md flex-shrink-0">
@@ -467,7 +453,7 @@ const getPlatformButtonPosition = (index: number, total: number) => {
                     <div class="text-3xl font-bold text-emerald-600 mb-1">
                       {{ animatedArticlesDisplay }}
                     </div>
-                    <div class="text-gray-600 text-sm font-medium">全网文章数</div>
+                    <div class="text-gray-600 text-sm font-medium">全网文章/发帖数</div>
                   </div>
                 </div>
               </div>

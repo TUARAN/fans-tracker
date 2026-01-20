@@ -36,7 +36,7 @@ export const useFansStore = defineStore('fans', () => {
       _51cto: '',
       wechat: '',
       weibo: 'https://weibo.com/u/7962821975',
-      infoq: 'https://www.infoq.cn/profile/101F0D86A30093/publish',
+      infoq: '',
       xiaohongshu: ''
     },
     anthony404: {
@@ -95,7 +95,7 @@ export const useFansStore = defineStore('fans', () => {
       avatar: '👨‍💻',
       themeColor: 'orange',
       status: 'active',
-      platforms: ['csdn', 'juejin', 'toutiao', 'infoq', 'weibo'],
+      platforms: ['csdn', 'juejin', 'toutiao', 'weibo'],
       isMain: true
     },
     {
@@ -441,7 +441,7 @@ export const useFansStore = defineStore('fans', () => {
     const anthonyData: FanData[] = [
       {
         id: 'anthony-csdn-1',
-        date: '2025-08-28',
+        date: '2026-01-20',
         accountId: 'anthony',
         community: 'csdn',
         fansCount: 535,
@@ -454,7 +454,7 @@ export const useFansStore = defineStore('fans', () => {
       },
       {
         id: 'anthony-juejin-1',
-        date: '2025-08-28',
+        date: '2026-01-20',
         accountId: 'anthony',
         community: 'juejin',
         fansCount: 13000,
@@ -477,19 +477,6 @@ export const useFansStore = defineStore('fans', () => {
         dailyFansGrowth: 40,
         dailyReadGrowth: 0,
         dailyLikeGrowth: 3
-      },
-      {
-        id: 'anthony-infoq-1',
-        date: '2025-07-14',
-        accountId: 'anthony',
-        community: 'infoq',
-        fansCount: 12,
-        readCount: 49479,
-        articleCount: 15,
-        likeCount: generateLikeCount(12),
-        dailyFansGrowth: 3,
-        dailyReadGrowth: 0,
-        dailyLikeGrowth: 1
       },
       {
         id: 'anthony-weibo-1',
@@ -577,10 +564,10 @@ export const useFansStore = defineStore('fans', () => {
         date: today,
         accountId: 'anthony404',
         community: 'xiaohongshu',
-        fansCount: 5420,
-        readCount: 200000,
+        fansCount: 11000,
+        readCount: 1000000,
         articleCount: 300,
-        likeCount: generateLikeCount(5420),
+        likeCount: 17000,
         dailyFansGrowth: 30,
         dailyReadGrowth: 0,
         dailyLikeGrowth: 12
